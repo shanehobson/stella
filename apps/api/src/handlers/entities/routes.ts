@@ -13,6 +13,7 @@ import listFiles from "@/api/handlers/entities/list-files";
 import listFolders from "@/api/handlers/entities/list-folders";
 import moveEntity from "@/api/handlers/entities/move";
 import openDesktopEditSession from "@/api/handlers/entities/open-desktop-edit-session";
+import openFolioCollabSession from "@/api/handlers/entities/open-folio-collab-session";
 import organizeSuggestions from "@/api/handlers/entities/organize-suggestions";
 import readEntities from "@/api/handlers/entities/read";
 import readEntityById from "@/api/handlers/entities/read-by-id";
@@ -67,6 +68,9 @@ export const entitiesRoute = new Elysia({
   })
   .post("/desktop-edit-sessions/open", openDesktopEditSession.handler, {
     body: openDesktopEditSession.config.body,
+  })
+  .post("/folio-collab-sessions/open", openFolioCollabSession.handler, {
+    body: openFolioCollabSession.config.body,
   })
   .post("/desktop-edit-sessions/release", releaseDesktopEditLock.handler, {
     body: releaseDesktopEditLock.config.body,

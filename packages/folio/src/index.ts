@@ -2,6 +2,7 @@ export {
   DocxEditor,
   type DocxEditorProps,
   type DocxEditorRef,
+  type DocxEditorCollaboration,
   type EditorMode,
 } from "./components/DocxEditor";
 export {

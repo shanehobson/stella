@@ -34,9 +34,11 @@ import {
   XIcon,
 } from "lucide-react";
 import { Selection } from "prosemirror-state";
+import type { Plugin } from "prosemirror-state";
 // Paginated editor
 import type { EditorView } from "prosemirror-view";
 import { useTranslations } from "use-intl";
+import type { XmlFragment } from "yjs";
 
 import { Button } from "@stll/ui/components/button";
 import {
@@ -372,6 +374,23 @@ export type DocxEditorProps = {
    * (decoration meta, apply, scroll-to) from outside the editor.
    */
   onEditorViewReady?: (view: EditorView | null) => void;
+  /** Yjs-backed collaboration owner. Experimental and opt-in. */
+  collaboration?: DocxEditorCollaboration | undefined;
+};
+
+export type DocxEditorCollaboration = {
+  awareness?:
+    | {
+        clientID: number;
+        getStates(): Map<number, unknown>;
+        off(event: "change" | "update", handler: () => void): void;
+        on(event: "change" | "update", handler: () => void): void;
+      }
+    | undefined;
+  onSeeded?: (() => void) | undefined;
+  plugins?: Plugin[] | undefined;
+  shouldSeed?: boolean | undefined;
+  yXmlFragment: XmlFragment;
 };
 
 /**
@@ -675,6 +694,7 @@ export const DocxEditor = forwardRef<DocxEditorRef, DocxEditorProps>(
       onReadonlyEditAttempt,
       onCompatibilityChange,
       onEditorViewReady,
+      collaboration,
     },
     ref,
   ) {
@@ -978,8 +998,18 @@ export const DocxEditor = forwardRef<DocxEditorRef, DocxEditorProps>(
       [],
     );
     const editorPlugins = useMemo(
-      () => [suggestionPlugin, aiSuggestionPlugin, aiCitationPlugin],
-      [suggestionPlugin, aiSuggestionPlugin, aiCitationPlugin],
+      () => [
+        ...(collaboration?.plugins ?? []),
+        suggestionPlugin,
+        aiSuggestionPlugin,
+        aiCitationPlugin,
+      ],
+      [
+        suggestionPlugin,
+        aiSuggestionPlugin,
+        aiCitationPlugin,
+        collaboration?.plugins,
+      ],
     );
 
     // Surface the live PM view to the host for AI overlay wiring.
@@ -3653,6 +3683,9 @@ export const DocxEditor = forwardRef<DocxEditorRef, DocxEditorProps>(
                           }
                         }}
                         externalPlugins={editorPlugins}
+                        {...(collaboration !== undefined
+                          ? { collaboration }
+                          : {})}
                         onHyperlinkClick={handleHyperlinkClick}
                         onContextMenu={handleContextMenu}
                         commentsSidebarOpen={showCommentsSidebar}
