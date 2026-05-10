@@ -24,6 +24,7 @@ import { fieldsRoute } from "@/api/handlers/fields/routes";
 import { filesRoute } from "@/api/handlers/files/routes";
 import { healthRoute } from "@/api/handlers/health/routes";
 import { invoicesRoute } from "@/api/handlers/invoices/routes";
+import { legislationRoute } from "@/api/handlers/legislation/routes";
 import { mcpConnectorsRoute } from "@/api/handlers/mcp-connectors/routes";
 import { mcpRoute } from "@/api/handlers/mcp/routes";
 import { organizationSettingsRoute } from "@/api/handlers/organization-settings/routes";
@@ -320,6 +321,7 @@ const api = new Elysia()
       .use(clauseCategoriesRoute)
       .use(clausesRoute)
       .use(contactsRoute)
+      .use(legislationRoute)
       .use(searchRoute)
       .use(auditLogsRoute)
       .use(caseLawRoute)
