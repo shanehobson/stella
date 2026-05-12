@@ -4,6 +4,7 @@ import type { Static } from "elysia";
 
 import { CHAT_SEND_MODE } from "@stll/anonymize-chat";
 import type { ChatSendMode } from "@stll/anonymize-chat";
+import type { SkillMetadata } from "@stll/skills";
 
 import type { SafeDb, SafeDbError } from "@/api/db";
 import { chatMessages, chatThreads } from "@/api/db/schema";
@@ -358,6 +359,7 @@ const sendMessage = createSafeRootHandler(
       hasActiveFileChat: body.activeFile?.supportsDocxEdits === true,
       externalTools: externalMcpTools.tools,
       disabledNativeToolSlugs,
+      skillMetadata: chatContext.skillMetadata,
     });
 
     const externalMcpSystemHint = buildExternalMcpSystemHint(
@@ -823,6 +825,7 @@ type PrepareChatContextResult = Result<
      * `systemSafe`.
      */
     systemUntrusted: string;
+    skillMetadata: readonly SkillMetadata[];
   },
   HandlerError<422 | 500> | SafeDbError
 >;
@@ -858,10 +861,12 @@ const prepareChatContext = async ({
         activeExternal,
         activeFile,
         contextMatterIds,
+        organizationId,
         practiceJurisdictions,
         refRegistry,
         safeDb,
         userContext,
+        userId,
         workspaceId,
       }),
       hydrateMessages({
@@ -897,6 +902,7 @@ const prepareChatContext = async ({
       promptCacheKey: buildChatPromptCacheKey(systemPrompt.cacheStablePrefix),
       systemSafe: systemPrompt.safePrompt,
       systemUntrusted: systemPrompt.untrustedSuffix,
+      skillMetadata: systemPrompt.skillMetadata,
       hydratedMessages: hydrateAssistantMessageRefs({
         messages: messagesWithActiveFileFallback,
         refRegistry,
