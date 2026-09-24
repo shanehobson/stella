@@ -1632,7 +1632,7 @@ const isTanStackToolResultContentPart = (part: unknown): boolean => {
   );
 };
 
-const mergeAnonRestorations = (
+export const mergeAnonRestorations = (
   current: ChatMessageMetadata["anonRestorations"],
   next: NonNullable<ChatMessageMetadata["anonRestorations"]>,
 ): NonNullable<ChatMessageMetadata["anonRestorations"]> => ({
